@@ -47,6 +47,26 @@
             day:    'Day',
             list:   'List'
           },
+          firstDay: 1,
+          dayRender: function(date) {
+            var cellDate = new Date(date['date']);
+            var cellDay = cellDate.getDay();
+            var element = date['el'];
+
+            if (cellDate.getDay() === 0 || cellDate.getDay() === 6) {
+              $(element).append(
+                  '<br/><label>1st Session</label><br/>' +
+                  '<input type="checkbox"/><br/>' +
+                  '<label>2nd Session</label><br/>' +
+                  '<input type="checkbox"/>'
+              );
+            } else {
+              $(element).append(
+                  '<br/><label>PM Session</label><br/>' +
+                  '<input type="checkbox"/><br/>'
+              );
+            }
+          },
           dateClick: function(info) {
             var dateClicked = info['dateStr'];
             var $calendarDiv = $("[data-date='" + dateClicked + "'].fc-day");
