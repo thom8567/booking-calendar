@@ -1,0 +1,6 @@
+{
+    "require": {
+        "symfony/panther": "^0.6.1",
+        "symfony/css-selector": "^5.0"
+    }
+}

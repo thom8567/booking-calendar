@@ -4,13 +4,12 @@
     <meta charset="UTF-8">
     <title>Availability Calendar</title>
 
-    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
-            integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+    <script src="https://code.jquery.com/jquery-3.4.1.js"
+            integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
             crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
             integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
             crossorigin="anonymous"></script>
-
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
           integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
           crossorigin="anonymous">
@@ -33,7 +32,12 @@
 
     <script>
 
-      document.addEventListener('DOMContentLoaded', function() {
+      $(function() {
+
+        $.get("/scraper.php", function(returnedData) {
+          console.log(JSON.parse(returnedData));
+        });
+
         var calendarEl = document.getElementById('calendar');
 
         var calendar = new FullCalendar.Calendar(calendarEl, {
@@ -53,7 +57,7 @@
             var cellDay = cellDate.getDay();
             var element = date['el'];
 
-            if (cellDate.getDay() === 0 || cellDate.getDay() === 6) {
+            if (cellDay === 0 || cellDay === 6) {
               $(element).append(
                   '<br/><label>1st Session</label><br/>' +
                   '<input type="checkbox"/><br/>' +
@@ -76,6 +80,7 @@
       });
 
     </script>
+
 </head>
 <body>
 
