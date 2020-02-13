@@ -34,10 +34,6 @@
 
       $(function() {
 
-        $.get("/scraper.php", function(returnedData) {
-          console.log(JSON.parse(returnedData));
-        });
-
         var calendarEl = document.getElementById('calendar');
 
         var calendar = new FullCalendar.Calendar(calendarEl, {

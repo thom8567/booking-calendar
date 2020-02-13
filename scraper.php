@@ -13,14 +13,17 @@ function createCrawler($client)
     return $client->request('GET', 'https://www.britishrowing.org/rowing-activity-finder/calendar/');
 }
 
+function fetchEvents($crawler)
+{
+    return $crawler->filter('table')->filter('tr')->each(function ($tr, $i) {
+        return $tr->filter('td')->each(function ($td, $i) {
+            return str_replace('VIEW EVENT', '', trim($td->text()));
+        });
+    });
+}
+
 $client = createClient();
 $crawler = createCrawler($client);
-$fullPageHtml = $crawler->html();
+$table = fetchEvents($crawler);
 
-$table = $crawler->filter('table')->filter('tr')->each(function ($tr, $i) {
-    return $tr->filter('td')->each(function ($td, $i) {
-        return str_replace('VIEW EVENT', '', trim($td->text()));
-    });
-});
-
-echo json_encode($table);
+var_dump($table);
