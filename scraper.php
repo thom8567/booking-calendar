@@ -21,33 +21,15 @@ function fetchEvents($crawler)
         }
         $response = [
             'title' => $tr->filter('.rich-results__result__content__title')->text(),
-            'date' => new DateTime($tr->filter('.rich-results__result__content__date__datetime')->text()),
+            'date' => (new DateTime($tr->filter('.rich-results__result__content__date__datetime')->text()))->format('Y-m-d'),
         ];
-//        $tr->filter('.rich-results__result__content__synopsis')->each(function ($item) use (&$response) {
-//            $itemText = $item->text();
-//            if (strpos($itemText, 'Region:') !== false) {
-//                $response["region"] = str_replace('Region: ', '', $itemText);
-//            } elseif (strpos($itemText, 'Category:') !== false) {
-//                $response["category"] = str_replace('Category: ', '', $itemText);
-//            } elseif (strpos($itemText, 'Status:') !== false) {
-//                $response["status"] = str_replace('Status: ', '', $itemText);
-//            } elseif (strpos($itemText, 'Booking Deadline:') !== false) {
-//                $response["booking_deadline"] = str_replace('Booking Deadline: ', '', $itemText);
-//            } elseif (strpos($itemText, 'Planned Closing Date:') !== false) {
-//                $response["planned_closing_date"] = str_replace('Planned Closing Date: ', '', $itemText);
-//            } else {
-//                $response = $itemText;
-//            }
-//        });
         $tr->filter('.rich-results__result__content__synopsis')->each(function ($item) use (&$response) {
             $itemText = $item->text();
-            if (!preg_match('/[^:]*:/', $itemText)) {
-                echo 'Nothing happened';
-                return $itemText;
+            if (!strpos($item->text(), ':')) {
+                $response[] = $itemText;
             }
-            $matches = preg_match('/[^:]*:/', $itemText, $output_array);
-            var_dump(preg_match('/[^:]*:/', $itemText, $output_array));
-            var_dump($matches);
+            $itemText = explode(':', $item->text());
+            $response[str_replace(' ', '_', mb_strtolower($itemText[0]))] = trim($itemText[1]);
         });
         return $response;
     });
@@ -57,6 +39,8 @@ $client = createClient();
 
 $crawler = createCrawler($client);
 
-//var_dump(fetchEvents($crawler));
+$events = array_filter(fetchEvents($crawler));
+
+echo json_encode($events);
 
 
