@@ -10,17 +10,17 @@
 
     <script>
 
-      //JQuery Selectors
-      var $modalEventTitle = $("#eventTitle");
-      var $modalEventStartTime = $("#eventStartTime");
-      var $modalEventRegion = $("#eventRegion");
-      var $modalEventCategory = $("#eventCategory");
-      var $modalEventStatus = $("#eventStatus");
-      var $modalEventDeadline = $("#eventDeadline");
-      var $modalEventClosingDate = $("#eventClosing");
-      var $eventModal = $("#eventModal");
-
       $(function() {
+
+        //JQuery Selectors
+        var $modalEventTitle = $("#eventTitle");
+        var $modalEventStartTime = $("#eventStartTime");
+        var $modalEventRegion = $("#eventRegion");
+        var $modalEventCategory = $("#eventCategory");
+        var $modalEventStatus = $("#eventStatus");
+        var $modalEventDeadline = $("#eventDeadline");
+        var $modalEventClosingDate = $("#eventClosing");
+        var $eventModal = $("#eventModal");
 
         var calendarEl = document.getElementById('calendar');
 
@@ -50,8 +50,8 @@
             $modalEventDeadline.toggle(!!event.extendedProps.booking_deadline);
             $modalEventClosingDate.html('Planned Closing Date: ' + event.extendedProps.planned_closing_date);
             $modalEventClosingDate.toggle(!!event.extendedProps.planned_closing_date);
-            $eventModal.modal('toggle');
-          }
+            $eventModal.modal();
+          },
           // dayRender: function(date) {
           //   var cellDate = new Date(date['date']);
           //   var cellDay = cellDate.getDay();
@@ -96,16 +96,18 @@
     </script>
 
 </head>
-<body>
+<body onload="startLoader()" class="hideOverflow">
 
     <div id="eventModal" class="modal fade">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
+                    <div class="modal-title">
+                        <span id="eventTitle"></span>
+                    </div>
                     <button type="button" class="close" data-dismiss="modal">
-                        <span hidden>×</span>
+                        <span>×</span>
                     </button>
-                    <h4 id="eventTitle" class="modal-title"></h4>
                 </div>
                 <div id="modalBody" class="modal-body">
                     <div class="container">
@@ -133,7 +135,25 @@
         </div>
     </div>
 
-    <div id='calendar'></div>
+    <div id="loaderContainer">
+        <div id="loaderBackground"></div>
+        <div id="loader"></div>
+    </div>
+
+    <div id="calendar"></div>
+
+    <script>
+      function startLoader()
+      {
+        setTimeout(showCalendar, 5000);
+      }
+
+      function showCalendar()
+      {
+        $("#loaderContainer").hide();
+        $("body").removeClass("hideOverflow");
+      }
+    </script>
 
 </body>
 </html>
