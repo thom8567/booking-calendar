@@ -10,8 +10,19 @@
 
     <script>
 
-      $(function() {
+      function showCalendar()
+      {
+        $("#loaderContainer").hide();
+        $("body").removeClass("hideOverflow");
+      }
 
+      function getTodaysDate()
+      {
+        var today = new Date();
+        return today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear();
+      }
+
+      $(function() {
         //JQuery Selectors
         var $modalEventTitle = $("#eventTitle");
         var $modalEventStartTime = $("#eventStartTime");
@@ -28,14 +39,56 @@
           schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
           plugins: [ 'resourceDayGrid', 'interaction', 'bootstrap' ],
           themeSystem: 'bootstrap',
+          customButtons: {
+            nextYearButton: {
+              bootstrapFontAwesome: 'fa-angle-double-right',
+              click: function() {
+                calendar.nextYear();
+              }
+            },
+            prevYearButton: {
+              bootstrapFontAwesome: 'fa-angle-double-left',
+              click: function() {
+                calendar.prevYear();
+              }
+            }
+          },
+          header: {
+            right: 'prevYearButton,prev,today,next,nextYearButton',
+          },
           buttonText: {
-            today:  'Today',
+            today:  'Today: ' + getTodaysDate(),
             month:  'Month',
             week:   'Week',
             day:    'Day',
             list:   'List'
           },
           firstDay: 1,
+          eventOrder: function(a, b) {
+            let statusA = a['status'];
+            let statusB = b['status'];
+            let priorities = {
+              'Cancelled': 10,
+              'Suspended': 9,
+              'Fully Closed': 8,
+              'Closed for Entries': 7,
+              'Closed for Bookings': 6,
+              'Open for Entries': 5,
+              'Accepting Bookings': 4,
+              'Planning': 3
+            };
+            if (!(statusA in priorities) || !(statusB in priorities)){
+              return -1;
+            }
+            let aPriority = priorities[statusA];
+            let bPriority = priorities[statusB];
+            if (aPriority > bPriority) {
+              return -1;
+            }
+            if (aPriority < bPriority) {
+              return 1;
+            }
+          },
           eventClick: function(info) {
             let event = info['event'];
             $modalEventTitle.html(event.title);
@@ -75,11 +128,51 @@
         calendar.render();
 
         $.get('/scraper.php', function(returnedData) {
+          var colour = '';
+          var textColour = 'black';
           var rowingEvents = JSON.parse(returnedData);
           Object.values(rowingEvents).forEach(function (item) {
             //if there is no title or no date then do not attempt to render the event
             if (!item['title'] || !item['date']) {
               return;
+            }
+            switch (item['status']) {
+              case 'Cancelled':
+                colour = '#cc0000';
+                textColour = 'white';
+                break;
+              case 'Suspended':
+                colour = '#ffa31a';
+                textColour = 'black';
+                break;
+              case 'Closed for Bookings':
+                colour = '#003e80';
+                textColour = 'white';
+                break;
+              case 'Closed for Entries':
+                colour = '#ff1a1a';
+                textColour = 'black';
+                break;
+              case 'Accepting Bookings':
+                colour = '#007bff';
+                textColour = 'white';
+                break;
+              case 'Open for Entries':
+                colour = '#009933';
+                textColour = 'black';
+                break;
+              case 'Fully Closed':
+                colour = '#801a00';
+                textColour = 'white';
+                break;
+              case 'Planning':
+                colour = 'lightGrey';
+                textColour = 'black';
+                break;
+              default:
+                colour = '#007bff';
+                textColour = 'white';
+                break;
             }
             calendar.addEvent({
               title: item['title'],
@@ -89,14 +182,18 @@
               status: item['status'] || false,
               booking_deadline: item['booking_deadline'] || false,
               planned_closing_date: item['planned_closing_date'] || false,
+              color: colour,
+              textColor: textColour,
+              editable: false,
             });
           });
+          showCalendar();
         });
       });
     </script>
 
 </head>
-<body onload="startLoader()" class="hideOverflow">
+<body class="hideOverflow">
 
     <div id="eventModal" class="modal fade">
         <div class="modal-dialog">
@@ -141,19 +238,6 @@
     </div>
 
     <div id="calendar"></div>
-
-    <script>
-      function startLoader()
-      {
-        setTimeout(showCalendar, 5000);
-      }
-
-      function showCalendar()
-      {
-        $("#loaderContainer").hide();
-        $("body").removeClass("hideOverflow");
-      }
-    </script>
 
 </body>
 </html>
