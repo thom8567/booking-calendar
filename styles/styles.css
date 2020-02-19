@@ -25,9 +25,9 @@
 }
 
 #loaderContainer {
-    height:100vh;
-    width:100vw;
-    position:absolute;
+    height: 100vh;
+    width: 100vw;
+    position: absolute;
     z-index: 2;
 }
 
@@ -43,4 +43,16 @@
 
 body {
     height: 100vh;
+}
+
+.fc-event-container {
+    cursor: pointer;
+}
+
+.availability-marker {
+    z-index: 10;
+}
+
+.fc-day-grid-event .fc-content {
+    white-space: normal !important;
 }

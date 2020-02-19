@@ -22,10 +22,20 @@
         return today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear();
       }
 
+      function formatDate(dateToFormat)
+      {
+        var date = new Date(dateToFormat);
+
+        return new Intl.DateTimeFormat('en-GB', {weekday: 'long'}).format(date.getDay())
+            + ', ' + date.getDate() + ' '
+            + new Intl.DateTimeFormat('en-GB', {month: 'long'}).format(date.getMonth()) + ' '
+            + date.getFullYear();
+      }
+
       $(function() {
         //JQuery Selectors
         var $modalEventTitle = $("#eventTitle");
-        var $modalEventStartTime = $("#eventStartTime");
+        var $modalEventDate = $("#eventDate");
         var $modalEventRegion = $("#eventRegion");
         var $modalEventCategory = $("#eventCategory");
         var $modalEventStatus = $("#eventStatus");
@@ -37,7 +47,7 @@
 
         var calendar = new FullCalendar.Calendar(calendarEl, {
           schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
-          plugins: [ 'resourceDayGrid', 'interaction', 'bootstrap' ],
+          plugins: ['resourceDayGrid', 'interaction', 'bootstrap'],
           themeSystem: 'bootstrap',
           customButtons: {
             nextYearButton: {
@@ -92,17 +102,24 @@
           eventClick: function(info) {
             let event = info['event'];
             $modalEventTitle.html(event.title);
-            $modalEventStartTime.html('Date: ' + event.start);
-            $modalEventRegion.html('Region: ' + event.extendedProps.region);
-            $modalEventRegion.toggle(!!event.extendedProps.region);
-            $modalEventCategory.html('Category: ' + event.extendedProps.category);
-            $modalEventCategory.toggle(!!event.extendedProps.category);
+
             $modalEventStatus.html('Status: ' + event.extendedProps.status);
             $modalEventStatus.toggle(!!event.extendedProps.status);
+
+            $modalEventDate.html('Date: ' + event.extendedProps.dateOfEvent);
+
+            $modalEventRegion.html('Region: ' + event.extendedProps.region);
+            $modalEventRegion.toggle(!!event.extendedProps.region);
+
+            $modalEventCategory.html('Category: ' + event.extendedProps.category);
+            $modalEventCategory.toggle(!!event.extendedProps.category);
+
             $modalEventDeadline.html('Booking Deadline: ' + event.extendedProps.booking_deadline);
             $modalEventDeadline.toggle(!!event.extendedProps.booking_deadline);
+
             $modalEventClosingDate.html('Planned Closing Date: ' + event.extendedProps.planned_closing_date);
             $modalEventClosingDate.toggle(!!event.extendedProps.planned_closing_date);
+
             $eventModal.modal();
           },
           // dayRender: function(date) {
@@ -124,6 +141,25 @@
           //     );
           //   }
           // },
+          dateClick: function(info) {
+            let element = info['dayEl'];
+            if ($('.fa-check').length) {
+              $('.fa-check').remove();
+              $(element).append(
+                '<div class="d-flex justify-content-center align-items-center">' +
+                  '<i class="fas fa-times fa-9x availability-marker"></i>' +
+                '</div>'
+              )
+            } else if ($('.fa-times').length) {
+              $('.fa-times').remove();
+            } else {
+              $(element).append(
+                '<div class="d-flex justify-content-center align-items-center">' +
+                  '<i class="fas fa-check fa-9x availability-marker"></i>' +
+                '</div>'
+              );
+            }
+          },
         });
         calendar.render();
 
@@ -177,6 +213,7 @@
             calendar.addEvent({
               title: item['title'],
               start: item['date'],
+              dateOfEvent: formatDate(item['date']),
               category: item['category'] || false,
               region: item['region'] || false,
               status: item['status'] || false,
@@ -209,16 +246,16 @@
                 <div id="modalBody" class="modal-body">
                     <div class="container">
                         <div class="row">
-                            <span id="eventStartTime"></span>
+                            <span id="eventStatus"></span>
+                        </div>
+                        <div class="row">
+                            <span id="eventDate"></span>
                         </div>
                         <div class="row">
                             <span id="eventRegion"></span>
                         </div>
                         <div class="row">
                             <span id="eventCategory"></span>
-                        </div>
-                        <div class="row">
-                            <span id="eventStatus"></span>
                         </div>
                         <div class="row">
                             <span id="eventDeadline"></span>
