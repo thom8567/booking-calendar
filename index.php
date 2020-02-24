@@ -143,18 +143,25 @@
           // },
           dateClick: function(info) {
             let element = info['dayEl'];
-            if ($('.fa-check').length) {
-              $('.fa-check').remove();
+            let date = info['dateStr'];
+            let $crossSelector = $('[data-date="' + date + '"] > .fa-times');
+            let $tickSelector = $('[data-date="' + date + '"] > .fa-check');
+
+            //On first click add a Tick
+            //On second click remove Tick and add a cross
+            //On third click remove the cross to leave the day blank
+            if ($tickSelector.length) {
+              $tickSelector.remove();
               $(element).append(
-                '<div class="d-flex justify-content-center align-items-center">' +
+                '<div class="d-flex justify-content-center align-items-center" data-date=' + date + '>' +
                   '<i class="fas fa-times fa-9x availability-marker"></i>' +
                 '</div>'
-              )
-            } else if ($('.fa-times').length) {
-              $('.fa-times').remove();
+              );
+            } else if ($crossSelector.length) {
+              $crossSelector.remove();
             } else {
               $(element).append(
-                '<div class="d-flex justify-content-center align-items-center">' +
+                '<div class="d-flex justify-content-center align-items-center" data-date=' + date + '>' +
                   '<i class="fas fa-check fa-9x availability-marker"></i>' +
                 '</div>'
               );
