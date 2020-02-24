@@ -26,8 +26,8 @@
       {
         var date = new Date(dateToFormat);
 
-        return new Intl.DateTimeFormat('en-GB', {weekday: 'long'}).format(date.getDay())
-            + ', ' + date.getDate() + ' '
+        return new Intl.DateTimeFormat('en-GB', {weekday: 'long'}).format(date.getDay()) + ', '
+            + date.getDate() + ' '
             + new Intl.DateTimeFormat('en-GB', {month: 'long'}).format(date.getMonth()) + ' '
             + date.getFullYear();
       }
