@@ -49,10 +49,19 @@ body {
     cursor: pointer;
 }
 
-.availability-marker {
-    z-index: 10;
-}
-
 .fc-day-grid-event .fc-content {
     white-space: normal !important;
+}
+
+html.loading #calendar {
+    top: -50000000px;
+    position: absolute;
+}
+
+html.loading body {
+    overflow: hidden;
+}
+
+.availabilityMarker {
+    padding-left: 5px;
 }

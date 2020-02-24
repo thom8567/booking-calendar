@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="loading">
 <head>
     <meta charset="UTF-8">
     <title>Availability Calendar</title>
@@ -13,7 +13,7 @@
       function showCalendar()
       {
         $("#loaderContainer").hide();
-        $("body").removeClass("hideOverflow");
+        $("html").removeClass("loading");
       }
 
       function getTodaysDate()
@@ -61,9 +61,19 @@
               click: function() {
                 calendar.prevYear();
               }
+            },
+            resetButton: {
+              text: 'Reset',
+              click: function() {
+                let $crossSelector = $('.fa-times');
+                let $tickSelector = $('.fa-check');
+                $crossSelector.remove();
+                $tickSelector.remove();
+              }
             }
           },
           header: {
+            center: 'resetButton',
             right: 'prevYearButton,prev,today,next,nextYearButton',
           },
           buttonText: {
@@ -122,30 +132,11 @@
 
             $eventModal.modal();
           },
-          // dayRender: function(date) {
-          //   var cellDate = new Date(date['date']);
-          //   var cellDay = cellDate.getDay();
-          //   var element = date['el'];
-          //
-          //   if (cellDay === 0 || cellDay === 6) {
-          //     $(element).append(
-          //         '<br/><label>1st Session</label><br/>' +
-          //         '<input type="checkbox"/><br/>' +
-          //         '<label>2nd Session</label><br/>' +
-          //         '<input type="checkbox"/>'
-          //     );
-          //   } else {
-          //     $(element).append(
-          //         '<br/><label>PM Session</label><br/>' +
-          //         '<input type="checkbox"/><br/>'
-          //     );
-          //   }
-          // },
           dateClick: function(info) {
             let element = info['dayEl'];
             let date = info['dateStr'];
-            let $crossSelector = $('[data-date="' + date + '"] > .fa-times');
-            let $tickSelector = $('[data-date="' + date + '"] > .fa-check');
+            let $crossSelector = $('[data-date="' + date + '"].fa-times');
+            let $tickSelector = $('[data-date="' + date + '"].fa-check');
 
             //On first click add a Tick
             //On second click remove Tick and add a cross
@@ -153,17 +144,13 @@
             if ($tickSelector.length) {
               $tickSelector.remove();
               $(element).append(
-                '<div class="d-flex justify-content-center align-items-center" data-date=' + date + '>' +
-                  '<i class="fas fa-times fa-9x availability-marker"></i>' +
-                '</div>'
+                '<i class="fas fa-times fa-2x availabilityMarker" data-date=' + date + '></i>'
               );
             } else if ($crossSelector.length) {
               $crossSelector.remove();
             } else {
               $(element).append(
-                '<div class="d-flex justify-content-center align-items-center" data-date=' + date + '>' +
-                  '<i class="fas fa-check fa-9x availability-marker"></i>' +
-                '</div>'
+                '<i class="fas fa-check fa-2x availabilityMarker" data-date=' + date + '></i>'
               );
             }
           },
@@ -237,7 +224,7 @@
     </script>
 
 </head>
-<body class="hideOverflow">
+<body>
 
     <div id="eventModal" class="modal fade">
         <div class="modal-dialog">
