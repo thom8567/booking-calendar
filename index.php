@@ -65,10 +65,8 @@
             resetButton: {
               text: 'Reset',
               click: function() {
-                let $crossSelector = $('.fa-times');
-                let $tickSelector = $('.fa-check');
-                $crossSelector.remove();
-                $tickSelector.remove();
+                let date = dayjs(calendar.getDate()).format('YYYY-MM');
+                $(`[data-date*="${date}"].availabilityMarker`).remove();
               }
             }
           },
@@ -135,22 +133,27 @@
           dateClick: function(info) {
             let element = info['dayEl'];
             let date = info['dateStr'];
+            let clickedDate = new Date(date);
+            let calendarDate = calendar.getDate();
             let $crossSelector = $('[data-date="' + date + '"].fa-times');
             let $tickSelector = $('[data-date="' + date + '"].fa-check');
 
+            if (clickedDate < calendarDate) {
+              return;
+            }
             //On first click add a Tick
             //On second click remove Tick and add a cross
             //On third click remove the cross to leave the day blank
             if ($tickSelector.length) {
               $tickSelector.remove();
               $(element).append(
-                '<i class="fas fa-times fa-2x availabilityMarker" data-date=' + date + '></i>'
+                  '<i class="fas fa-times fa-2x availabilityMarker" data-date=' + date + '></i>'
               );
             } else if ($crossSelector.length) {
               $crossSelector.remove();
             } else {
               $(element).append(
-                '<i class="fas fa-check fa-2x availabilityMarker" data-date=' + date + '></i>'
+                  '<i class="fas fa-check fa-2x availabilityMarker" data-date=' + date + '></i>'
               );
             }
           },

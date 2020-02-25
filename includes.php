@@ -34,3 +34,9 @@
 <script src='https://unpkg.com/@fullcalendar/resource-daygrid@4.3.0/main.js'></script>
 <script src="https://unpkg.com/@fullcalendar/bootstrap@4.3.0/main.js"></script>
 <script src="https://unpkg.com/@fullcalendar/interaction@4.3.0/main.js"></script>
+
+<!-- day.js -->
+<script src="https://unpkg.com/dayjs@1.8.20/dayjs.min.js"></script>
+<script>
+  dayjs().format()
+</script>
