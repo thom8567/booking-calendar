@@ -41,6 +41,20 @@
   dayjs().format();
 </script>
 
+<!-- Alertify JS -->
+<script src="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css"/>
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/bootstrap.min.css"/>
+<script type="text/javascript">
+  //override defaults
+  alertify.defaults.transition = "slide";
+  alertify.defaults.theme.ok = "btn btn-primary";
+  alertify.defaults.theme.cancel = "btn btn-danger";
+  alertify.defaults.theme.input = "form-control";
+</script>
+
 <!-- My Stylesheet -->
 <link rel="stylesheet" href="/styles/styles.css">
 

@@ -47,12 +47,6 @@
         editable: false,
       });
     });
-    showCalendar();
-  }
-
-  function showCalendar() {
-    $("#loaderContainer").hide();
-    $("html").removeClass("loading");
   }
 
   function getTodaysDate() {
@@ -78,6 +72,9 @@
     var $modalEventDeadline = $("#eventDeadline");
     var $modalEventClosingDate = $("#eventClosing");
     var $eventModal = $("#eventModal");
+    var $resetButton = $("[data-type='reset']");
+    var $updateEventsButton = $("[data-type='updateEvents']");
+    var $topMenu = $("#top-menu");
 
     var calendarEl = document.getElementById('calendar');
 
@@ -86,29 +83,22 @@
       plugins: ['resourceDayGrid', 'interaction', 'bootstrap'],
       themeSystem: 'bootstrap',
       customButtons: {
-        nextYearButton: {
-          bootstrapFontAwesome: 'fa-angle-double-right',
+        topMenuButton: {
+          bootstrapFontAwesome: 'fa-bars',
           click: function() {
-            calendar.nextYear();
-          }
-        },
-        prevYearButton: {
-          bootstrapFontAwesome: 'fa-angle-double-left',
-          click: function() {
-            calendar.prevYear();
-          }
-        },
-        resetButton: {
-          text: 'Reset',
-          click: function() {
-            let date = dayjs(calendar.getDate()).format('YYYY-MM');
-            $(`[data-date*="${date}"].availabilityMarker`).remove();
+            //open top menu to show option buttons
+            if ($topMenu.is(":visible")) {
+              $topMenu.slideUp();
+            } else {
+              $topMenu.slideDown();
+            }
           }
         }
       },
       header: {
-        center: 'resetButton',
-        right: 'prevYearButton,prev,today,next,nextYearButton',
+        left: 'topMenuButton',
+        center: 'title',
+        right: 'prevYear,prev,today,next,nextYear',
       },
       buttonText: {
         today:  'Today: ' + getTodaysDate(),
@@ -196,6 +186,26 @@
     });
     calendar.render();
 
-    getEvents(addEventsToCalendar);
+    $resetButton.click(function() {
+      let date = dayjs(calendar.getDate()).format('YYYY-MM');
+      let $markerSelector = $(`[data-date*="${date}"].availabilityMarker`);
+      $markerSelector.remove();
+
+      if ($markerSelector.length) {
+        alertify.error('Calendar selections have not been reset')
+      }
+      alertify.success('Calendar selections have been reset');
+    });
+
+    $updateEventsButton.click(function() {
+      $topMenu.hide();
+      $('html').addClass('loading');
+
+      getEvents(function(events) {
+        addEventsToCalendar(events);
+        $("#loaderContainer").hide();
+        $("html").removeClass("loading");
+      });
+    })
   });
 }());

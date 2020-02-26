@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="loading">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Availability Calendar</title>
@@ -10,6 +10,15 @@
 
 </head>
 <body>
+
+    <div id="top-menu" class="container-fluid top-menu">
+        <div id="topMenuOptions" class="row">
+            <div class="column">
+                <button class="btn btn-danger" type="button" data-type="reset">Reset</button>
+                <button class="btn btn-success" type="button" data-type="updateEvents">Update Events</button>
+            </div>
+        </div>
+    </div>
 
     <div id="eventModal" class="modal fade">
         <div class="modal-dialog">

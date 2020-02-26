@@ -25,6 +25,7 @@
 }
 
 #loaderContainer {
+    display: none;
     height: 100vh;
     width: 100vw;
     position: absolute;
@@ -32,9 +33,24 @@
 }
 
 #loaderBackground {
+    display: none;
     width: 100vw;
     height: 100vh;
     background-color: white;
+}
+
+html.loading #calendar {
+    top: -50000000px;
+    position: absolute;
+}
+
+html.loading body {
+    overflow: hidden;
+}
+
+html.loading #loaderContainer,
+html.loading #loaderBackground {
+    display: block;
 }
 
 .hideOverflow {
@@ -53,15 +69,23 @@ body {
     white-space: normal !important;
 }
 
-html.loading #calendar {
-    top: -50000000px;
-    position: absolute;
-}
-
-html.loading body {
-    overflow: hidden;
-}
-
 .availabilityMarker {
+    padding-left: 5px;
+}
+
+.fc-header-toolbar {
+    background-color: #007bff;
+}
+
+.fc-header-toolbar > .fc-center > h2 {
+    color: white;
+}
+
+.top-menu {
+    display: none;
+    background-color: #99caff;
+}
+
+#topMenuOptions {
     padding-left: 5px;
 }
