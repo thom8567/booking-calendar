@@ -59,4 +59,4 @@
 <link rel="stylesheet" href="/styles/styles.css">
 
 <!-- JS Used to Render Calendar and provide functions for it -->
-<script type="text/javascript" src="./calendar.js"></script>
+<script type="text/javascript" src="/calendar.js"></script>
