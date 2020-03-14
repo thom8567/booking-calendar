@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
-require __DIR__ . "/includes/sql_connection.php";
 require __DIR__ . "/vendor/autoload.php";
 use Goutte\Client as GoutteClient;
+use Symfony\Component\DomCrawler\Crawler;
 
 class WebCrawler
 {
@@ -26,9 +26,9 @@ class WebCrawler
     }
 
     /**
-     * @return \Symfony\Component\DomCrawler\Crawler
+     * @return Crawler
      */
-    private function createCrawler() : \Symfony\Component\DomCrawler\Crawler
+    private function createCrawler() : Crawler
     {
         return $this->client->request('GET', 'https://www.britishrowing.org/rowing-activity-finder/calendar/');
     }
@@ -58,84 +58,3 @@ class WebCrawler
         });
     }
 }
-
-class EventSaver
-{
-    private $pdo;
-    private $events;
-
-    /**
-     * EventSaver constructor.
-     * @param $pdoConnection
-     * @param $events
-     */
-    public function __construct($pdoConnection, array $events)
-    {
-        $this->pdo = $pdoConnection;
-        $this->events = $events;
-    }
-
-    public function saveEvents() : void
-    {
-        foreach($this->events as $key => $value) {
-
-            if (empty($value['title']) || empty($value['date'])) {
-                continue;
-            }
-            $eventName = $value['title'];
-            $eventDate = $value['date'];
-            $eventDetails = json_encode([
-                $value['region'] ?? '',
-                $value['category'] ?? '',
-                $value['status'] ?? '',
-                $value['booking_deadline'] ?? '',
-                $value['planned_closing_date'] ?? ''
-            ]);
-
-            $selectResults = $this->checkEventExists($eventName);
-
-            if ($selectResults) {
-                $this->updateEvent($eventName, $eventDate, $eventDetails);
-            } else {
-                $this->insertEvent($eventName, $eventDate, $eventDetails);
-            }
-        }
-        echo('success');
-    }
-
-    private function checkEventExists(string $eventName) : array
-    {
-        $selectStmt = $this->pdo->prepare("SELECT * FROM calendarEvents where eventName = ?");
-        $selectStmt->execute([$eventName]);
-        return $selectStmt->fetchAll();
-    }
-
-    private function insertEvent(string $eventName, string $eventDate, string $eventDetails) : void
-    {
-        $insertStmt = $this->pdo->prepare("INSERT INTO calendarEvents(eventName, eventStartDate, eventDetails) VALUES (?, ?, ?)");
-        $insertStmt->execute([$eventName, $eventDate, $eventDetails]);
-        if (!$insertStmt) {
-            echo('fail');
-            die();
-        }
-        $stmt = null;
-    }
-
-    private function updateEvent(string $eventName, string $eventDate, string $eventDetails) : void
-    {
-        $updateStmt = $this->pdo->prepare("UPDATE calendarEvents SET eventStartDate = ?, eventDetails = ? where eventName = ?");
-        $updateStmt->execute([$eventDate, $eventDetails, $eventName]);
-        if (!$updateStmt) {
-            echo('fail');
-            die();
-        }
-    }
-}
-
-$client = new WebCrawler();
-
-$events = array_filter($client->fetchEvents());
-
-$eventSaver = new EventSaver($pdo, $events);
-
-$eventSaver->saveEvents();

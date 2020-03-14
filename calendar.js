@@ -1,9 +1,13 @@
 (function() {
   function getEvents(callback) {
-    $.get('/scraper.php', function(returnedData) {
+    $.get('/retrieveEvents.php', function(returnedData) {
 
-      console.log(returnedData);
-      callback(JSON.parse(returnedData));
+      if ('fail' === JSON.parse(returnedData)) {
+        alert('Event saving has failed!');
+      } else {
+        callback(JSON.parse(returnedData));
+      }
+
     }).fail(function() {
       alert('Events could not be retrieved!')
     });
