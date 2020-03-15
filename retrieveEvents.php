@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 include 'scraper.php';
 include 'eventSaver.php';
+include 'dbEventRetriever.php';
 
 interface EventRetrievalInterface
 {
@@ -35,15 +36,23 @@ class DBEventRetriever implements EventRetrievalInterface
         // get events from database
         $pdoConnection = $this->getPDO();
         //use new class to retrieve events
+        $dbEventRetriever = new DatabaseEventRetriever($pdoConnection);
+        $dbEvents = $dbEventRetriever->getEventsFromDatabase();
+        if (!$dbEvents) {
+            throw new \Exception('Events could not be retrieved');
+        }
+        return $dbEvents;
     }
 }
+
 $retriever = new LiveEventRetriever();
 // OR
 $retriever = new DBEventRetriever();
+
 class EventDisplayer
 {
     private $retriever;
-    public function __construct(EventRetrivalInterface $retriever)
+    public function __construct(EventRetrievalInterface $retriever)
     {
         $this->retriever = $retriever;
     }
@@ -55,15 +64,11 @@ class EventDisplayer
         // do stuff with events
     }
 }
+
 // Both will work as it uses the interface for type checking
 $displayer = new EventDisplayer(new LiveEventRetriever());
 $displayer = new EventDisplayer(new DBEventRetriever());
 $displayer->displayEvents();
 
-
-
-$eventSaver = new EventSaver($pdo, $events);
-
-$eventSaver->saveEvents();
 
 //echo json_encode($events);
