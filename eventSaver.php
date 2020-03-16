@@ -26,11 +26,11 @@ class EventSaver
             $eventName = $value['title'];
             $eventDate = $value['date'];
             $eventDetails = json_encode([
-                $value['region'] ?? '',
-                $value['category'] ?? '',
-                $value['status'] ?? '',
-                $value['booking_deadline'] ?? '',
-                $value['planned_closing_date'] ?? ''
+                'region' => $value['region'] ?? '',
+                'category' => $value['category'] ?? '',
+                'status' => $value['status'] ?? '',
+                'booking_deadline' => $value['booking_deadline'] ?? '',
+                'planned_closing_date' => $value['planned_closing_date'] ?? ''
             ]);
 
             $selectResults = $this->checkEventExists($eventName);

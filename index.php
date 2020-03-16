@@ -15,6 +15,7 @@
         <div id="topMenuOptions" class="row">
             <div class="column">
                 <button class="btn btn-danger" type="button" data-type="reset">Reset</button>
+                <label>Click the button below to update the events in the database</label>
                 <button class="btn btn-success" type="button" data-type="updateEvents">Update Events</button>
             </div>
         </div>

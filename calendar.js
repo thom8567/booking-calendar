@@ -1,15 +1,9 @@
 (function() {
-  function getEvents(callback) {
-    $.get('/retrieveEvents.php', function(returnedData) {
-
-      if ('fail' === JSON.parse(returnedData)) {
-        alert('Event saving has failed!');
-      } else {
-        callback(JSON.parse(returnedData));
-      }
-
+  function getEvents(callback, callType) {
+    $.post('/retrieveEvents.php', {callType: callType} ,function(returnedData) {
+      callback(JSON.parse(returnedData));
     }).fail(function() {
-      alert('Events could not be retrieved!')
+      alert('Events could not be retrieved');
     });
   }
 
@@ -31,10 +25,12 @@
 
   function addEventsToCalendar(events) {
     Object.values(events).forEach(function (item) {
+      console.log(JSON.parse(item['eventDetails']));
       //if there is no title or no date then do not attempt to render the event
-      if (!item['title'] || !item['date']) {
+      if (!item['eventName'] || !item['eventStartDate']) {
         return;
       }
+      let eventDetails = JSON.parse(item['eventDetails']) || null;
       const [
         colour,
         textColour
@@ -192,6 +188,14 @@
     });
     calendar.render();
 
+    //Get events from DB upon load
+    $('html').addClass("loading");
+    getEvents(function(events) {
+      addEventsToCalendar(events);
+      $("#loaderContainer").hide();
+      $("html").removeClass("loading");
+    }, "dbEvents");
+
     $resetButton.click(function() {
       let date = dayjs(calendar.getDate()).format('YYYY-MM');
       let $markerSelector = $(`[data-date*="${date}"].availabilityMarker`);
@@ -211,7 +215,7 @@
         addEventsToCalendar(events);
         $("#loaderContainer").hide();
         $("html").removeClass("loading");
-      });
+      }, "liveEvents");
     })
   });
 }());

@@ -2,6 +2,7 @@
 include 'scraper.php';
 include 'eventSaver.php';
 include 'dbEventRetriever.php';
+include 'dbConnection.php';
 
 interface EventRetrievalInterface
 {
@@ -45,30 +46,79 @@ class DBEventRetriever implements EventRetrievalInterface
     }
 }
 
-$retriever = new LiveEventRetriever();
-// OR
-$retriever = new DBEventRetriever();
-
-class EventDisplayer
+class returnEvents
 {
     private $retriever;
+
+    /**
+     * returnEvents constructor.
+     * @param EventRetrievalInterface $retriever
+     */
     public function __construct(EventRetrievalInterface $retriever)
     {
         $this->retriever = $retriever;
     }
-    public function displayEvents()
+
+    public function returnEvents() : void
     {
         // You can guarantee $retriever will have method retrieveEvents
         // as it is in the interface. Everything else is a mystery
         $events = $this->retriever->retrieveEvents();
         // do stuff with events
+        echo json_encode($events);
     }
 }
 
-// Both will work as it uses the interface for type checking
-$displayer = new EventDisplayer(new LiveEventRetriever());
-$displayer = new EventDisplayer(new DBEventRetriever());
-$displayer->displayEvents();
+class saveEvents
+{
+    private $retriever;
 
+    /**
+     * saveEvents constructor.
+     * @param EventRetrievalInterface $retriever
+     */
+    public function __construct(EventRetrievalInterface $retriever)
+    {
+        $this->retriever = $retriever;
+    }
 
-//echo json_encode($events);
+    public function saveEvents() : void
+    {
+        $pdo = $this->getPDO();
+        $events = $this->retriever->retrieveEvents();
+        $eventSaver = new EventSaver($pdo, $events);
+        $eventSaver->saveEvents();
+    }
+
+    private function getPDO()
+    {
+        $dbConnection = new PDOConnection();
+        return $dbConnection->pdo;
+    }
+}
+
+$retrieverType = $_POST['callType'] ?? [];
+
+if (empty($retrieverType)) {
+    throw new \Exception('Method was called without any data!');
+}
+
+if ('dbEvents' === $retrieverType) {
+    $retriever = new DBEventRetriever();
+
+    $returner = new returnEvents($retriever);
+    $returner->returnEvents();
+} else if ('liveEvents') {
+    $retriever = new LiveEventRetriever();
+
+    $saver = new saveEvents($retriever);
+    $saver->saveEvents();
+
+    $retriever = new DBEventRetriever();
+
+    $returner = new returnEvents($retriever);
+    $returner->returnEvents();
+} else {
+    throw new \Exception('Method was called with an incorrect call type!');
+}
+
