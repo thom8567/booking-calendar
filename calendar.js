@@ -1,6 +1,6 @@
 (function() {
-  function getEvents(callback, callType) {
-    $.post('/retrieveEvents.php', {callType: callType} ,function(returnedData) {
+  function getEvents(callback, source) {
+    $.post('/retrieveEvents.php', {source: source} ,function(returnedData) {
       callback(JSON.parse(returnedData));
     }).fail(function() {
       alert('Events could not be retrieved');
@@ -25,25 +25,26 @@
 
   function addEventsToCalendar(events) {
     Object.values(events).forEach(function (item) {
-      console.log(JSON.parse(item['eventDetails']));
       //if there is no title or no date then do not attempt to render the event
       if (!item['eventName'] || !item['eventStartDate']) {
         return;
       }
       let eventDetails = JSON.parse(item['eventDetails']) || null;
+
       const [
         colour,
         textColour
-      ] = getColoursFromStatus(item['status']);
+      ] = getColoursFromStatus(eventDetails['status']);
+
       calendar.addEvent({
-        title: item['title'],
-        start: item['date'],
-        dateOfEvent: convertToLongDate(item['date']),
-        category: item['category'] || false,
-        region: item['region'] || false,
-        status: item['status'] || false,
-        booking_deadline: item['booking_deadline'] || false,
-        planned_closing_date: item['planned_closing_date'] || false,
+        title: item['eventName'],
+        start: item['eventStartDate'],
+        dateOfEvent: convertToLongDate(item['eventStartDate']),
+        category: eventDetails['category'] || false,
+        region: eventDetails['region'] || false,
+        status: eventDetails['status'] || false,
+        booking_deadline: eventDetails['booking_deadline'] || false,
+        planned_closing_date: eventDetails['planned_closing_date'] || false,
         color: colour,
         textColor: textColour,
         editable: false,
@@ -186,7 +187,6 @@
         }
       },
     });
-    calendar.render();
 
     //Get events from DB upon load
     $('html').addClass("loading");
@@ -196,14 +196,12 @@
       $("html").removeClass("loading");
     }, "dbEvents");
 
+    calendar.render();
+
     $resetButton.click(function() {
       let date = dayjs(calendar.getDate()).format('YYYY-MM');
       let $markerSelector = $(`[data-date*="${date}"].availabilityMarker`);
       $markerSelector.remove();
-
-      if ($markerSelector.length) {
-        alertify.error('Calendar selections have not been reset')
-      }
       alertify.success('Calendar selections have been reset');
     });
 

@@ -46,7 +46,7 @@ class DBEventRetriever implements EventRetrievalInterface
     }
 }
 
-class returnEvents
+class DisplayEvents
 {
     private $retriever;
 
@@ -69,7 +69,7 @@ class returnEvents
     }
 }
 
-class saveEvents
+class SaveEvents
 {
     private $retriever;
 
@@ -97,28 +97,21 @@ class saveEvents
     }
 }
 
-$retrieverType = $_POST['callType'] ?? [];
+$retrieverSource = $_POST['source'] ?? '';
 
-if (empty($retrieverType)) {
+if (empty($retrieverSource)) {
     throw new \Exception('Method was called without any data!');
 }
 
-if ('dbEvents' === $retrieverType) {
-    $retriever = new DBEventRetriever();
-
-    $returner = new returnEvents($retriever);
-    $returner->returnEvents();
-} else if ('liveEvents') {
-    $retriever = new LiveEventRetriever();
-
-    $saver = new saveEvents($retriever);
-    $saver->saveEvents();
-
-    $retriever = new DBEventRetriever();
-
-    $returner = new returnEvents($retriever);
-    $returner->returnEvents();
-} else {
+if (!in_array($retrieverSource, ['dbEvents', 'liveEvents'])) {
     throw new \Exception('Method was called with an incorrect call type!');
 }
+
+if ('liveEvents' === $retrieverSource) {
+    $saver = new SaveEvents(new LiveEventRetriever());
+    $saver->saveEvents();
+}
+
+$displayer = new DisplayEvents(new DBEventRetriever());
+$displayer->returnEvents();
 
