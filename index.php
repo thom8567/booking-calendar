@@ -11,12 +11,24 @@
 </head>
 <body>
 
-    <div id="top-menu" class="container-fluid top-menu">
-        <div id="topMenuOptions" class="row">
-            <div class="column">
-                <button class="btn btn-danger" type="button" data-type="reset">Reset</button>
-                <label>Click the button below to update the events in the database</label>
-                <button class="btn btn-success" type="button" data-type="updateEvents">Update Events</button>
+    <div id="top-menu" class="container top-menu topMenuOptions">
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="row">
+                    <span>Remove all placed markers for the month</span>
+                </div>
+                <div class="row">
+                    <button class="btn btn-danger" type="button" data-type="reset">Reset</button>
+                </div>
+            </div>
+
+            <div class="col-sm-3">
+                <div class="row">
+                    <span>Update all events in the Database</span>
+                </div>
+                <div class="row">
+                    <button class="btn btn-success" type="button" data-type="updateEvents">Update Events</button>
+                </div>
             </div>
         </div>
     </div>

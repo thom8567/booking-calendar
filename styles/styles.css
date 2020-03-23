@@ -84,8 +84,5 @@ body {
 .top-menu {
     display: none;
     background-color: #99caff;
-}
-
-#topMenuOptions {
-    padding-left: 5px;
+    max-width: 100%;
 }
