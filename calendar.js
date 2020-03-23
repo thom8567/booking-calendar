@@ -78,6 +78,8 @@
     var $resetButton = $("[data-type='reset']");
     var $updateEventsButton = $("[data-type='updateEvents']");
     var $topMenu = $("#top-menu");
+    var $adminButtons = $("#admin-buttons");
+    var $adminButtonsTemplate = $("#admin-buttons-templates");
 
     var calendarEl = document.getElementById('calendar');
 
@@ -214,6 +216,11 @@
         $("#loaderContainer").hide();
         $("html").removeClass("loading");
       }, "liveEvents");
-    })
+    });
+
+    //If user is admin then render buttons
+    var adminButtonsSource = $adminButtonsTemplate.html();
+    var adminButtonsTemplate = Handlebars.compile(adminButtonsSource);
+    $adminButtons.append(adminButtonsTemplate());
   });
 }());

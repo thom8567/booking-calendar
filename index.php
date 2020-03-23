@@ -22,16 +22,19 @@
                 </div>
             </div>
 
-            <div class="col-sm-3">
-                <div class="row">
-                    <span>Update all events in the Database</span>
-                </div>
-                <div class="row">
-                    <button class="btn btn-success" type="button" data-type="updateEvents">Update Events</button>
-                </div>
-            </div>
+            <!-- Admin only -->
+            <div class="col-sm-3" id="admin-buttons"></div>
         </div>
     </div>
+
+    <script id="admin-buttons-templates" type="text/x-handlebars-template">
+        <div class="row">
+            <span>Update all events in the Database</span>
+        </div>
+        <div class="row">
+            <button class="btn btn-success" type="button" data-type="updateEvents">Update Events</button>
+        </div>
+    </script>
 
     <div id="eventModal" class="modal fade">
         <div class="modal-dialog">
