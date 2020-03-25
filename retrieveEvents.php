@@ -3,8 +3,6 @@ include 'scraper.php';
 include 'eventSaver.php';
 include 'dbEventRetriever.php';
 include 'dbConnection.php';
-include 'displayEvents.php';
-include 'storeEvents.php';
 
 interface EventRetrievalInterface
 {
@@ -18,6 +16,9 @@ class LiveEventRetriever implements EventRetrievalInterface
         return new WebCrawler();
     }
 
+    /**
+     * @return array
+     */
     public function retrieveEvents(): array
     {
         $client = $this->getWebCrawler();
@@ -34,17 +35,72 @@ class DBEventRetriever implements EventRetrievalInterface
         return $dbConnection->pdo;
     }
 
+    /**
+     * @return array
+     * @throws Exception
+     */
     public function retrieveEvents(): array
     {
-        // get events from database
         $pdoConnection = $this->getPDO();
         //use new class to retrieve events
         $dbEventRetriever = new DatabaseEventRetriever($pdoConnection);
         $dbEvents = $dbEventRetriever->getEventsFromDatabase();
+
         if (!$dbEvents) {
             throw new \Exception('Events could not be retrieved');
         }
         return $dbEvents;
+    }
+}
+
+class DisplayEvents
+{
+    private $retriever;
+
+    /**
+     * returnEvents constructor.
+     * @param EventRetrievalInterface $retriever
+     */
+    public function __construct(EventRetrievalInterface $retriever)
+    {
+        $this->retriever = $retriever;
+    }
+
+    public function returnEvents() : void
+    {
+        // You can guarantee $retriever will have method retrieveEvents
+        // as it is in the interface. Everything else is a mystery
+        $events = $this->retriever->retrieveEvents();
+        // do stuff with events
+        echo json_encode($events);
+    }
+}
+
+class SaveEvents
+{
+    private $retriever;
+
+    /**
+     * saveEvents constructor.
+     * @param EventRetrievalInterface $retriever
+     */
+    public function __construct(EventRetrievalInterface $retriever)
+    {
+        $this->retriever = $retriever;
+    }
+
+    public function saveEvents() : void
+    {
+        $pdo = $this->getPDO();
+        $events = $this->retriever->retrieveEvents();
+        $eventSaver = new EventSaver($pdo, $events);
+        $eventSaver->saveEvents();
+    }
+
+    private function getPDO()
+    {
+        $dbConnection = new PDOConnection();
+        return $dbConnection->pdo;
     }
 }
 
@@ -59,7 +115,7 @@ if (!in_array($retrieverSource, ['dbEvents', 'liveEvents'])) {
 }
 
 if ('liveEvents' === $retrieverSource) {
-    $saver = new StoreEvents(new LiveEventRetriever());
+    $saver = new SaveEvents(new LiveEventRetriever());
     $saver->saveEvents();
 }
 

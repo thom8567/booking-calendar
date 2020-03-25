@@ -5,11 +5,6 @@ class EventSaver
     private $pdo;
     private $events;
 
-    /**
-     * EventSaver constructor.
-     * @param $pdoConnection
-     * @param $events
-     */
     public function __construct($pdoConnection, array $events)
     {
         $this->pdo = $pdoConnection;

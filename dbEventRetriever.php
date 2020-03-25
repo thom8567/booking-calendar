@@ -3,10 +3,6 @@ class DatabaseEventRetriever
 {
     private $pdo;
 
-    /**
-     * DatabaseEventRetriever constructor.
-     * @param $pdoConnection
-     */
     public function __construct($pdoConnection)
     {
         $this->pdo = $pdoConnection;
