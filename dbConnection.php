@@ -6,7 +6,8 @@ class PDOConnection
     public function __construct()
     {
         try {
-            $this->pdo = new PDO('mysql:host=127.0.0.1;dbname=derbyRowingClub', 'homestead', 'secret');
+            //Connect to the WP db
+            $this->pdo = new PDO('mysql:host='.DB_HOST.';dbname='.DB_NAME, DB_USER, DB_PASSWORD);
             $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             //Setting a persistent connection to remove overhead as the details above will not change
             $this->pdo->setAttribute(PDO::ATTR_PERSISTENT, true);
